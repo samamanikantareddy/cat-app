@@ -4,6 +4,6 @@ namespace cat_app.Models
 {
     public class ApplicationUser : IdentityUser
     {
-
+        public List<Cat> FavouriteCats { get; internal set; }
     }
 }

@@ -9,5 +9,7 @@ namespace cat_app.Data
         public CatDbContext(DbContextOptions options): base(options)
         {
         }
+
+        public DbSet<Cat> FavouriteCats { get; set; }
     }
 }
