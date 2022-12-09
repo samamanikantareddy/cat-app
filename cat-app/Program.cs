@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using cat_app.Models;
 using Library;
+using cat_app.DataCache;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +11,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddSingleton<CatApiClient<Cat>>();
+
+builder.Services.AddSingleton<CatStore>();
 
 // add sqlite database
 builder.Services.AddDbContext<CatDbContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("Default")));

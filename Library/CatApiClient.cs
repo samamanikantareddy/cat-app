@@ -8,6 +8,7 @@ namespace Library
         private readonly HttpClient client;
         private readonly string CAT_API_URL;
         private readonly string API_KEY;
+        private const int limit = 20;
 
         public CatApiClient()
         {
@@ -19,17 +20,23 @@ namespace Library
         public CatApiClient(IConfiguration configuration)
         {
             client = new();
-            CAT_API_URL = configuration["CatApi:Url"];
             API_KEY = configuration["CatApi:Key"];
+            CAT_API_URL = configuration["CatApi:Url"] + $"?limit={limit}&api_key=" + API_KEY;
         }
 
         public async Task<List<T>?> GetCats()
         {
             var request = CreateRequest();
-            using var response = await client.SendAsync(request);
-            response.EnsureSuccessStatusCode();
-            var body = await response.Content.ReadAsStringAsync();
-            return CreateCatsFromJson(body);
+            try
+            {
+                using var response = await client.SendAsync(request);
+                response.EnsureSuccessStatusCode();
+                var body = await response.Content.ReadAsStringAsync();
+                return CreateCatsFromJson(body);
+            }catch(HttpRequestException e)
+            {
+                throw new Exception("Service unavailable! no internet connection");
+            }
         }
 
         private HttpRequestMessage CreateRequest()
@@ -37,11 +44,7 @@ namespace Library
             return new HttpRequestMessage
             {
                 Method = HttpMethod.Get,
-                RequestUri = new Uri(CAT_API_URL),
-                Headers =
-            {
-                { "x-api-key", API_KEY },
-            },
+                RequestUri = new Uri(CAT_API_URL)
             };
         }
 

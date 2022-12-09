@@ -1,2 +1,32 @@
 ﻿@{
+    ViewData["Title"] = "My watch List";
 }
+
+@model List<Cat>
+
+<div class="container">
+    <h2>My Favourite Cats</h2>
+    @if (Model.Count == 0)
+    {
+        <div>There are no cats in your list!</div>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (Cat cat in Model)
+            {
+                <div class="col-md-4 col-lg-3 col-sm-6 p-2">
+                    <form asp-controller="Cats">
+                        <div class="card p-2" style="width: 18rem;">
+                            <img src="@cat.url" class="card-img-top" style="height: 400px;" alt="cat">
+                            <div class="card-body">
+                                <button name="id" type="submit" value="@cat.id" asp-action="RemoveFromFavourites" class="btn btn-danger">Remove from favourites</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            }
+        </div>
+    }
+</div>
+
