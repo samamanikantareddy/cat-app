@@ -1,5 +1,7 @@
 using cat_app.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using cat_app.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +10,9 @@ builder.Services.AddControllersWithViews();
 
 // add sqlite database
 builder.Services.AddDbContext<CatDbContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("Default")));
+
+builder.Services.AddDefaultIdentity<ApplicationUser>()
+    .AddEntityFrameworkStores<CatDbContext>();
 
 var app = builder.Build();
 
@@ -22,11 +27,14 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+app.UseAuthentication();;
 
 app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.MapRazorPages();
 
 app.Run();
