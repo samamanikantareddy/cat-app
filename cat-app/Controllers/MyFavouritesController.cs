@@ -1,6 +1,5 @@
-﻿using cat_app.Data;
-using cat_app.Models;
-using Library;
+﻿using Library.DataAccess;
+using Library.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,12 +7,12 @@ namespace cat_app.Controllers
 {
     public class MyFavouritesController : Controller
     {
-        private readonly CatDbContext _db;
         private List<Cat> FavouriteCats;
+        private readonly IProvider<Cat> _provider;
 
-        public MyFavouritesController(CatDbContext db)
+        public MyFavouritesController(IProvider<Cat> provider)
         {
-            _db = db;
+            _provider = provider;
         }
 
         private bool FetchFavouriteCats()
@@ -22,9 +21,7 @@ namespace cat_app.Controllers
             if (user != default(ApplicationUser))
                 try
                 {
-                    FavouriteCats = (from c in _db.FavouriteCats
-                                     where string.Equals(c.Fan.UserName, user!.UserName)
-                                     select c).ToList();
+                    FavouriteCats = _provider.GetFavouritesByUser(user.UserName!);
                     TempData["Error"] = false;
                     return true;
                 }
@@ -60,13 +57,10 @@ namespace cat_app.Controllers
             {
                 return Redirect("~/Account/Login");
             }
-            var cat = (from c in _db.FavouriteCats
-                       where string.Equals(c.id, id)
-                       select c).FirstOrDefault();
+            var cat = _provider.GetById(id);
             if (cat != default(Cat))
             {
-                _db.FavouriteCats.Remove(cat);
-                _db.SaveChanges();
+                _provider.Delete(id);
             }
             return RedirectToAction("Index");
         }
@@ -74,11 +68,7 @@ namespace cat_app.Controllers
         private ApplicationUser? GetAuthenticatedUser()
         {
             var username = User.Identity!.Name;
-            return (from u in _db.Users
-                    where string.Equals(username, u.UserName)
-                    select u)
-                .Include(_user => _user.FavouriteCats!)
-                .FirstOrDefault();
+            return _provider.GetUser(username!);
         }
     }
 }

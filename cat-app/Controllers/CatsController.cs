@@ -1,15 +1,13 @@
-﻿using cat_app.Data;
-using cat_app.DataCache;
-using cat_app.Models;
-using Library;
+﻿using cat_app.DataCache;
+using Library.DataAccess;
+using Library.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace cat_app.Controllers
 {
     public class CatsController : Controller
     {
-        private readonly CatDbContext _db;
+        private readonly IProvider<Cat> _provider;
 
         private readonly CatStore store;
         
@@ -17,17 +15,18 @@ namespace cat_app.Controllers
 
         private bool isSuccess = true;
 
-        public CatsController(CatDbContext db, CatStore catStore)
+        public CatsController(CatStore catStore, IProvider<Cat> provider)
         {
-            _db = db;
+            _provider = provider;
             store = catStore;
             try
             {
                 Cats = store.GetCats();
                 isSuccess = true;
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Console.WriteLine(e.Message);
                 isSuccess = false;
             }
         }
@@ -58,13 +57,12 @@ namespace cat_app.Controllers
                 if (cat != default(Cat))
                 {
                     cat.Fan = user;
-                    //from c in user.FavouriteCats;
                     var exists = user.FavouriteCats.Exists(_cat => string.Equals(_cat.id, cat.id));
                     if (!exists)
                     {
                         cat.Fan = user;
                         user.FavouriteCats.Add(cat);
-                        _db.SaveChanges();
+                        _provider.AddToFavourites(cat);
                     }
                 }
             }
@@ -74,11 +72,7 @@ namespace cat_app.Controllers
         private ApplicationUser? GetAuthenticatedUser()
         {
             var username = User.Identity!.Name;
-            return (from u in _db.Users
-                    where string.Equals(username, u.UserName)
-                    select u)
-                .Include(_user => _user.FavouriteCats!)
-                .FirstOrDefault();
+            return _provider.GetUser(username!);
         }
     }
 }

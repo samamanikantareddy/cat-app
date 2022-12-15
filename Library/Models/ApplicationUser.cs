@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace cat_app.Models
+namespace Library.Models
 {
     public class ApplicationUser : IdentityUser
     {
-        public List<Cat> FavouriteCats { get; set; }
+        public List<Cat>? FavouriteCats { get; set; }
     }
 }

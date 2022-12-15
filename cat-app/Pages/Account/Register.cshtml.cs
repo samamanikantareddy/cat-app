@@ -3,7 +3,7 @@
 #nullable disable
 
 using System.ComponentModel.DataAnnotations;
-using cat_app.Models;
+using Library.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;

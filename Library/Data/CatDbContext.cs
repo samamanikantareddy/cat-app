@@ -1,8 +1,8 @@
-﻿using cat_app.Models;
+﻿using Library.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace cat_app.Data
+namespace Library.Data
 {
     public class CatDbContext: IdentityDbContext<ApplicationUser>
     {
@@ -10,6 +10,6 @@ namespace cat_app.Data
         {
         }
 
-        public DbSet<Cat> FavouriteCats { get; set; }
+        public DbSet<Cat>? FavouriteCats { get; set; }
     }
 }

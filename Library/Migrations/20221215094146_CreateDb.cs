@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace cat_app.Migrations
+namespace Library.Migrations
 {
-    public partial class UpdateDbToIdentityDbContext : Migration
+    public partial class CreateDb : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -94,8 +94,8 @@ namespace cat_app.Migrations
                 name: "AspNetUserLogins",
                 columns: table => new
                 {
-                    LoginProvider = table.Column<string>(type: "TEXT", nullable: false),
-                    ProviderKey = table.Column<string>(type: "TEXT", nullable: false),
+                    LoginProvider = table.Column<string>(type: "TEXT", maxLength: 128, nullable: false),
+                    ProviderKey = table.Column<string>(type: "TEXT", maxLength: 128, nullable: false),
                     ProviderDisplayName = table.Column<string>(type: "TEXT", nullable: true),
                     UserId = table.Column<string>(type: "TEXT", nullable: false)
                 },
@@ -139,8 +139,8 @@ namespace cat_app.Migrations
                 columns: table => new
                 {
                     UserId = table.Column<string>(type: "TEXT", nullable: false),
-                    LoginProvider = table.Column<string>(type: "TEXT", nullable: false),
-                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    LoginProvider = table.Column<string>(type: "TEXT", maxLength: 128, nullable: false),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 128, nullable: false),
                     Value = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
@@ -152,6 +152,70 @@ namespace cat_app.Migrations
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "FavouriteCats",
+                columns: table => new
+                {
+                    id = table.Column<string>(type: "TEXT", nullable: false),
+                    url = table.Column<string>(type: "TEXT", nullable: true),
+                    width = table.Column<int>(type: "INTEGER", nullable: false),
+                    height = table.Column<int>(type: "INTEGER", nullable: false),
+                    FanId = table.Column<string>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FavouriteCats", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_FavouriteCats_AspNetUsers_FanId",
+                        column: x => x.FanId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Breed",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    name = table.Column<string>(type: "TEXT", nullable: true),
+                    origin = table.Column<string>(type: "TEXT", nullable: true),
+                    description = table.Column<string>(type: "TEXT", nullable: true),
+                    wikipedia_url = table.Column<string>(type: "TEXT", nullable: true),
+                    temperament = table.Column<string>(type: "TEXT", nullable: true),
+                    cfa_url = table.Column<string>(type: "TEXT", nullable: true),
+                    vetstreet_url = table.Column<string>(type: "TEXT", nullable: true),
+                    Catid = table.Column<string>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Breed", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_Breed_FavouriteCats_Catid",
+                        column: x => x.Catid,
+                        principalTable: "FavouriteCats",
+                        principalColumn: "id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Category",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    name = table.Column<string>(type: "TEXT", nullable: true),
+                    Catid = table.Column<string>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Category", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_Category_FavouriteCats_Catid",
+                        column: x => x.Catid,
+                        principalTable: "FavouriteCats",
+                        principalColumn: "id");
                 });
 
             migrationBuilder.CreateIndex(
@@ -190,6 +254,21 @@ namespace cat_app.Migrations
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Breed_Catid",
+                table: "Breed",
+                column: "Catid");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Category_Catid",
+                table: "Category",
+                column: "Catid");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_FavouriteCats_FanId",
+                table: "FavouriteCats",
+                column: "FanId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -210,7 +289,16 @@ namespace cat_app.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "Breed");
+
+            migrationBuilder.DropTable(
+                name: "Category");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "FavouriteCats");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

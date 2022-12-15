@@ -1,9 +1,9 @@
-using cat_app.Data;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
-using cat_app.Models;
-using Library;
 using cat_app.DataCache;
+using Library.Api;
+using Library.Data;
+using Library.Models;
+using Library.DataAccess;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +19,8 @@ builder.Services.AddDbContext<CatDbContext>(options => options.UseSqlite(builder
 
 builder.Services.AddDefaultIdentity<ApplicationUser>()
     .AddEntityFrameworkStores<CatDbContext>();
+
+builder.Services.AddScoped<IProvider<Cat>, DataProvider>();
 
 var app = builder.Build();
 
