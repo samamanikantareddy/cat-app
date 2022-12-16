@@ -37,8 +37,9 @@ namespace Library.Api
                 var body = await response.Content.ReadAsStringAsync();
                 return CreateCatsFromJson(body);
             }
-            catch (HttpRequestException)
+            catch (HttpRequestException e)
             {
+                Console.WriteLine(e.Message);
                 throw new Exception("Service unavailable! no internet connection");
             }
         }
@@ -77,8 +78,9 @@ namespace Library.Api
                 var body = await response.Content.ReadAsStringAsync();
                 return CreateBreedsFromJson(body);
             }
-            catch (HttpRequestException)
+            catch (HttpRequestException e)
             {
+                Console.WriteLine(e.Message);
                 throw new Exception("Service unavailable! no internet connection");
             }
         }

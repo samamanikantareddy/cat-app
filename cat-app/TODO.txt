@@ -1,3 +1,1 @@
-﻿1. Add data attributes to models like 
-2. Add more features (breeds, and images search)
-3. add more unit tests
+﻿2. Add more features (breeds, and images search)

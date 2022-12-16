@@ -1,0 +1,65 @@
+﻿@{
+    ViewData["Title"] = "Breed List";
+}
+@model List<Breed>
+
+<div class="container">
+    <div class="row">
+        @if (TempData != null)
+            @if ((bool)TempData["Error"]!)
+            {
+                <h3 class="text-danger">@TempData["Message"]</h3>
+            }
+            else
+            {
+                <table class="table">
+                    <thead>
+                        <tr class="table-primary">
+                            <th scope="col" class="text-danger fw-bold">Name</th>
+                            <th scope="col" class="text-danger fw-bold">Origin</th>
+                            <th scope="col" class="text-danger fw-bold">Temperament</th>
+                            <th scope="col" class="text-danger fw-bold">Vet street</th>
+                            <th scope="col" class="text-danger fw-bold">CFA</th>
+                            <th scope="col" class="text-danger fw-bold">Wikipidia</th>
+                            <th scope="col" class="text-danger fw-bold">Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (Breed breed in Model)
+                        {
+                            <tr>
+                                <td>@breed.name</td>
+                                <td>@breed.origin</td>
+                                <td>@breed.temperament</td>
+                                @if (!string.IsNullOrEmpty(breed.vetstreet_url))
+                                {
+                                    <td><a href="@breed.vetstreet_url">link</a></td>
+                                }
+                                else
+                                {
+                                    <td>N/A</td>
+                                }
+                                @if (!string.IsNullOrEmpty(breed.cfa_url))
+                                {
+                                    <td><a href="@breed.cfa_url">link</a></td>
+                                }
+                                else
+                                {
+                                    <td>N/A</td>
+                                }
+                                @if (!string.IsNullOrEmpty(breed.wikipedia_url))
+                                {
+                                    <td><a href="@breed.wikipedia_url">link</a></td>
+                                }
+                                else
+                                {
+                                    <td>N/A</td>
+                                }
+                                <td>@breed.description</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+    </div>
+</div>

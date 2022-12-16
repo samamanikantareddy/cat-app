@@ -28,7 +28,7 @@ namespace cat_app.DataCache
         {
             if (Breeds.Count == 0)
             {
-                Cats = _apiClient.GetBreeds()!.Result!.ToList();
+                Breeds = _apiClient.GetBreeds()!.Result!.ToList();
             }
             return Breeds;
         }

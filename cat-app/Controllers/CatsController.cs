@@ -13,6 +13,9 @@ namespace cat_app.Controllers
         
         private List<Cat>? Cats;
 
+
+        private List<Breed>? Breeds;
+
         private bool isSuccess = true;
 
         public CatsController(CatStore catStore, IProvider<Cat> provider)
@@ -22,11 +25,11 @@ namespace cat_app.Controllers
             try
             {
                 Cats = store.GetCats();
+                Breeds = store.GetBreeds();
                 isSuccess = true;
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
                 isSuccess = false;
             }
         }
@@ -44,6 +47,19 @@ namespace cat_app.Controllers
             return View();
         }
 
+        public IActionResult BreedsList()
+        {
+            if (!User.Identity!.IsAuthenticated)
+            {
+                return Redirect("~/Account/Login");
+            }
+            TempData["Error"] = !isSuccess;
+            if (isSuccess)
+                return View(Breeds);
+            TempData["Message"] = "Service unavailable! check your internet connection";
+            return View();
+        }
+
         public IActionResult AddToFavourites(string id)
         {
             if (!User.Identity!.IsAuthenticated)
@@ -57,7 +73,7 @@ namespace cat_app.Controllers
                 if (cat != default(Cat))
                 {
                     cat.Fan = user;
-                    var exists = user.FavouriteCats.Exists(_cat => string.Equals(_cat.id, cat.id));
+                    var exists = user.FavouriteCats!.Exists(_cat => string.Equals(_cat.id, cat.id));
                     if (!exists)
                     {
                         cat.Fan = user;
