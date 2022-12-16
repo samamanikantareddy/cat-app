@@ -17,6 +17,11 @@
                         <form asp-controller="Cats">
                             <div class="card p-2" style="width: 18rem;">
                                 <img src="@cat.url" class="card-img-top" style="height: 400px;" alt="cat">
+                                @if (cat.breeds!.Count != 0)
+                                {
+                                    <h6>Description</h6>
+                                    <p>@cat.breeds![0].description</p>
+                                }
                                 <div class="card-body">
                                     <button name="id" type="submit" value="@cat.id" asp-action="AddToFavourites" class="btn btn-primary">Add to Favourites</button>
                                 </div>
